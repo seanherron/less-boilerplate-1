@@ -231,6 +231,31 @@
         <echo>CSSLint Successful</echo>
     </target>
 
+    <!-- LESS compiler target, run separately -->
+    <target name="compileless">
+      <echo>Compile LESS to CSS</echo>
+      <apply dir="${dir.source}/${dir.less}" executable="java" parallel="false" failonerror="true">
+          <fileset dir="./${dir.source}/">
+              <include name="**/${dir.less}/${file.root.less.stylesheet}"/>
+          </fileset>
+          <arg value="-jar" />
+          <arg path="./${dir.build.tools}/${tool.rhino}" />
+          <arg path="./${dir.build.tools}/${tool.lessrhino}" />
+          <srcfile/>
+          <arg value="./style.less.css" />
+      </apply>
+      <echo message="Minifying css..."/>
+      <apply executable="java" parallel="false">
+          <fileset dir="${dir.source}/${dir.less}/" includes="style.less.css"/>
+          <arg line="-jar"/>
+          <arg path="${dir.build.tools}/${tool.yuicompressor}"/>
+          <srcfile/>
+          <arg line="-o"/>
+          <mapper type="merge" to="${basedir}/${dir.source}/${dir.less}/style.less.min.css"/>
+          <targetfile/>
+      </apply>
+    </target>
+
     <!--
     *************************************************
     * BUILD TARGETS                                 *
